@@ -1,0 +1,89 @@
+new item == name: packaging tomcat == free style project
+discard old builds:
+days to keep 5
+max # 5
+add git https://github.com/VamsidharV/Jenkins_Upgradev3.git
+
+in build:
+invoke top level maven targets:  goals: clean package
+
+post build actions: archive the artifacts : **/*.war
+
+
+save and apply
+
+build the project
+a war file is obtained in the artifacts folder
+
+open manage jenkins == manage plugins == available == search for copy art == copy artifact plugin is found == install without restart
+install without restart
+install another plugin called "deploy to container" from available section
+
+now create another free style project named deploy to application 
+discard old builds 
+days to keep 5
+max#5
+#no need to add any repository as our war files is present in another peoject of jenkins"
+
+build env:
+delete workspace before build starts and add time stamps
+
+
+build:
+copy artifacts from another projects
+select the project name
+enable stable build only
+artifacts to copy : **/*.war
+
+
+post-build actions:
+
+deploy war/ear to container
+war/ear files : **/*.war
+context path: /
+add credentials : tomcat  pwd:tomcat
+tomcat url : http://localhost:9090/
+
+
+save and appply
+
+build 
+
+
+you may get an error with users like manager-gui
+
+
+open ubuntu terminal
+search for tomcat-user.xml in bin folder
+edit the user names to be manager-script and mnanager-gui
+save, exit, restart the tomcat and build the project again
+after successful build, 
+open localhost:9090/ in another tab
+
+you get the output
+
+
+
+
+
+
+to make the projects dependent on each other:
+
+open the 1st project # packaging application:
+configure == post-build actions == build another projects == add project name # deploy_application_staging_env
+
+build triggers:
+
+poll scm == * * * * *  (triggers every hr)
+
+save and apply
+
+you find a downstream projects option in the project dashboard
+
+
+go to git repo
+search for index.jsp file
+make any changes in the matter to be displayed and save it 
+
+a build is automatically obtained in both the projects 
+
